@@ -82,5 +82,9 @@ def generate_tree_helper(origin: np.ndarray, p: np.ndarray, cutoff: float) \
         generate_tree_helper(origin + r2, r2, cutoff)
 
 
+def generate_tree(p: np.ndarray, cutoff: float):
+    return generate_tree_helper(np.array([0, 0, 0]), p, cutoff)
+
+
 if __name__ == "__main__":
-    generate_tree_helper(np.array([0, 0, 0]), np.array([1, 0, 0]), 0.05)
+    generate_tree(np.array([1, 0, 0]), 0.05)
