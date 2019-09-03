@@ -2,6 +2,7 @@ import numpy as np
 import math
 import random
 from ReciprocalRandom import ReciprocalRandom
+from ExpRandom import ExpRandom
 
 
 def vector_length(x: np.ndarray) -> float:
@@ -86,5 +87,15 @@ def generate_tree(p: np.ndarray, cutoff: float):
     return generate_tree_helper(np.array([0, 0, 0]), p, cutoff)
 
 
+def generate_event(cutoff):
+    energy = ExpRandom.generate(0, 1000)
+    phi = random.random() * math.pi * 2
+    theta = random.random() * math.pi
+    p1 = np.array([1, 0, 0])
+    p1 = rotate_y(p1, theta)
+    p1 = rotate_z(p1, phi)
+    return generate_tree(p1, cutoff) + generate_tree(-p1, cutoff)
+
+
 if __name__ == "__main__":
-    generate_tree(np.array([1, 0, 0]), 0.05)
+    generate_event(0.05)
