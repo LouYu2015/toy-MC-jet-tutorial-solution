@@ -91,7 +91,7 @@ def generate_event(cutoff):
     energy = ExpRandom.generate(0, 1000)
     phi = random.random() * math.pi * 2
     theta = random.random() * math.pi
-    p1 = np.array([1, 0, 0])
+    p1 = np.array([energy, 0, 0])
     p1 = rotate_y(p1, theta)
     p1 = rotate_z(p1, phi)
     return generate_tree(p1, cutoff) + generate_tree(-p1, cutoff)
