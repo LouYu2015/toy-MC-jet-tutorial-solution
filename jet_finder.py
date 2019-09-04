@@ -1,6 +1,7 @@
 import numpy as np
 import math
 import copy
+import generator
 
 
 def transverse(p: np.ndarray):
@@ -50,19 +51,31 @@ def find_jet_to_remove(jets: [np.ndarray], n):
     return min_i, min_d
 
 
-def cluster_jets(jets: [np.ndarray], n: int, r: int):
+def cluster_jets(jets: [np.ndarray], n: float, r: float, exclusive: bool):
     result = []
     jets = copy.copy(jets)
-    while len(jets) >= 2:
+    while len(jets) > (2 if exclusive else 1):
         min_merge_i, min_merge_j, min_merge_d = find_jets_to_merge(jets, n, r)
         min_i, min_d = find_jet_to_remove(jets, n)
-        if min_merge_d < min_d:
+        if min_merge_d < min_d or exclusive:
             jet1 = jets[min_merge_i]
             jet2 = jets[min_merge_j]
             del jets[min_merge_j]
             del jets[min_merge_i]
             jets.append(jet1 + jet2)
+            print("merging %d %d" % (min_merge_i, min_merge_j))
         else:
             result.append(jets[min_i])
             del jets[min_i]
+            print("promoting %d" % min_i)
     return result + jets
+
+
+def main():
+    j = generator.initial_jet()
+    print(cluster_jets(generator.generate_event(j, 0.05), 1, 1, exclusive=False))
+    print(j)
+
+
+if __name__ == "__main__":
+    main()
