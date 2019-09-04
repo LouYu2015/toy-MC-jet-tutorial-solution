@@ -87,15 +87,19 @@ def generate_tree(p: np.ndarray, cutoff: float):
     return generate_tree_helper(np.array([0, 0, 0]), p, cutoff)
 
 
-def generate_event(cutoff):
+def initial_jet() -> np.ndarray:
     energy = ExpRandom.generate(0, 1000)
     phi = random.random() * math.pi * 2
     theta = random.random() * math.pi
-    p1 = np.array([0, 0, energy])
-    p1 = rotate_y(p1, theta)
-    p1 = rotate_z(p1, phi)
-    return generate_tree(p1, cutoff) + generate_tree(-p1, cutoff)
+    p = np.array([0, 0, energy])
+    p = rotate_y(p, theta)
+    p = rotate_z(p, phi)
+    return p
+
+
+def generate_event(p: np.ndarray, cutoff: float) -> [np.ndarray]:
+    return generate_tree(p, cutoff) + generate_tree(-p, cutoff)
 
 
 if __name__ == "__main__":
-    generate_event(0.05)
+    generate_event(initial_jet(), 0.1)
