@@ -32,7 +32,7 @@ def find_jets_to_merge(jets: [np.ndarray], n, r, cache):
     min_d = float('inf')
     for i in range(len(jets)):
         for j in range(i + 1, len(jets)):
-            index = (id(jets[i]), id(jets[j]))
+            index = (tuple(jets[i]), tuple(jets[j]))
             if index in cache:
                 d = cache[index]
             else:
@@ -45,11 +45,16 @@ def find_jets_to_merge(jets: [np.ndarray], n, r, cache):
     return min_i, min_j, min_d
 
 
-def find_jet_to_remove(jets: [np.ndarray], n):
+def find_jet_to_remove(jets: [np.ndarray], n, cache):
     min_i = 0
     min_d = float('inf')
     for i in range(len(jets)):
-        d = beam_distance(jets[i], n)
+        index = tuple(jets[i])
+        if index in cache:
+            d = cache[index]
+        else:
+            d = beam_distance(jets[i], n)
+            cache[index] = d
         if d < min_d:
             min_i = i
             min_d = d
@@ -60,10 +65,11 @@ def cluster_jets(jets: [np.ndarray], n: float, r: float, exclusive: bool):
     result = []
     jets = copy.copy(jets)
     # jets = [np.array(x, dtype=np.float32) for x in jets]
-    cache = {}
+    cache_merge = {}
+    cache_promote = {}
     while len(jets) > (2 if exclusive else 1):
-        min_merge_i, min_merge_j, min_merge_d = find_jets_to_merge(jets, n, r, cache)
-        min_i, min_d = find_jet_to_remove(jets, n)
+        min_merge_i, min_merge_j, min_merge_d = find_jets_to_merge(jets, n, r, cache_merge)
+        min_i, min_d = find_jet_to_remove(jets, n, cache_promote)
         if min_merge_d < min_d or exclusive:
             jet1 = jets[min_merge_i]
             jet2 = jets[min_merge_j]
