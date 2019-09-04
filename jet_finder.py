@@ -25,14 +25,19 @@ def beam_distance(p: np.ndarray, n: int):
     return math.pow(transverse(p), 2 * n)
 
 
-def find_jets_to_merge(jets: [np.ndarray], n, r):
+def find_jets_to_merge(jets: [np.ndarray], n, r, cache):
     assert(len(jets) >= 2)
     min_i = 0
     min_j = 1
     min_d = float('inf')
     for i in range(len(jets)):
         for j in range(i + 1, len(jets)):
-            d = jet_distance(jets[i], jets[j], n, r)
+            index = (id(jets[i]), id(jets[j]))
+            if index in cache:
+                d = cache[index]
+            else:
+                d = jet_distance(jets[i], jets[j], n, r)
+                cache[index] = d
             if d < min_d:
                 min_i = i
                 min_j = j
@@ -54,8 +59,10 @@ def find_jet_to_remove(jets: [np.ndarray], n):
 def cluster_jets(jets: [np.ndarray], n: float, r: float, exclusive: bool):
     result = []
     jets = copy.copy(jets)
+    # jets = [np.array(x, dtype=np.float32) for x in jets]
+    cache = {}
     while len(jets) > (2 if exclusive else 1):
-        min_merge_i, min_merge_j, min_merge_d = find_jets_to_merge(jets, n, r)
+        min_merge_i, min_merge_j, min_merge_d = find_jets_to_merge(jets, n, r, cache)
         min_i, min_d = find_jet_to_remove(jets, n)
         if min_merge_d < min_d or exclusive:
             jet1 = jets[min_merge_i]
