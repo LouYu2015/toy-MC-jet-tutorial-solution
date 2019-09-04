@@ -73,11 +73,11 @@ def cluster_jets(jets: [np.ndarray], n: float, r: float, exclusive: bool):
             del jets[min_merge_j]
             del jets[min_merge_i]
             jets.append(jet1 + jet2)
-            print("merging %d %d" % (min_merge_i, min_merge_j))
+            # print("merging %d %d" % (min_merge_i, min_merge_j))
         else:
             result.append(jets[min_i])
             del jets[min_i]
-            print("promoting %d" % min_i)
+            # print("promoting %d" % min_i)
     return result + jets
 
 
