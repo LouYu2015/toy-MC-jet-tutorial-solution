@@ -9,10 +9,7 @@ def transverse(p: np.ndarray):
 
 
 def angular_distance(p1: np.ndarray, p2: np.ndarray):
-    return math.acos(
-        np.dot(p1, p2) /
-        (np.linalg.norm(p1) * np.linalg.norm(p2))
-    )
+    return math.atan2(np.linalg.norm(np.cross(p1, p2)), np.dot(p1, p2))
 
 
 def jet_distance(p1: np.ndarray, p2: np.ndarray, n: int, r: int):
