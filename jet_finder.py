@@ -2,6 +2,7 @@ import numpy as np
 import math
 import copy
 import generator
+import random
 
 
 def transverse(p: np.ndarray):
@@ -82,9 +83,17 @@ def cluster_jets(jets: [np.ndarray], n: float, r: float, exclusive: bool):
 
 
 def main():
-    j = generator.initial_jet()
-    print(cluster_jets(generator.generate_event(j, 0.05), 1, 1, exclusive=False))
-    print(j)
+    random.seed(0)
+    n = 1
+    r = 1
+    k = 1000
+    num_jets = []
+    for i in range(k):
+        j = generator.initial_jet()
+        clustered = cluster_jets(generator.generate_event(j, 0.5), 1, 1, exclusive=False)
+        num_jets.append(len(clustered))
+        print(i)
+    print(np.bincount(num_jets))
 
 
 if __name__ == "__main__":
