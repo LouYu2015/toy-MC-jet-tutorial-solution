@@ -4,6 +4,8 @@ import random
 from ReciprocalRandom import ReciprocalRandom
 from ExpRandom import ExpRandom
 
+EPS = 0.001
+
 
 def vector_length(x: np.ndarray) -> float:
     return np.sqrt(x.dot(x))
@@ -35,10 +37,10 @@ def split(p: np.ndarray) -> (np.ndarray, np.ndarray):
     energy = vector_length(p)
 
     # Energy for one branch
-    e1 = energy * (ReciprocalRandom.generate(0.1, 1.1) - 0.1)
+    e1 = energy * (ReciprocalRandom.generate(EPS, 1 + EPS) - EPS)
 
     # Angle of divergence
-    theta = ReciprocalRandom.generate(0.1, math.pi/2 + 0.1) - 0.1
+    theta = ReciprocalRandom.generate(EPS, math.pi/2 + EPS) - EPS
 
     # Get new branches
     r1 = np.array([e1*math.cos(theta),
