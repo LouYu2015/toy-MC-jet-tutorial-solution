@@ -82,18 +82,24 @@ def cluster_jets(jets: [np.ndarray], n: float, r: float, exclusive: bool):
     return result + jets
 
 
-def main():
-    random.seed(0)
-    n = 1
-    r = 1
-    k = 1000
+def jet_count_experiment(n: float, r: float, k: int) -> np.ndarray:
     num_jets = []
     for i in range(k):
         j = generator.initial_jet()
-        clustered = cluster_jets(generator.generate_event(j, 0.5), 1, 1, exclusive=False)
+        clustered = cluster_jets(generator.generate_event(j, 0.5), n, r, exclusive=False)
         num_jets.append(len(clustered))
         print(i)
-    print(np.bincount(num_jets))
+    return np.concatenate([[n], [r], np.bincount(num_jets, minlength=100)[:100]])
+
+
+def main():
+    random.seed(0)
+    result = []
+    for n in (-1, 0, 1):
+        for r in (0.01, 0.05, 0.1, 0.5, 1):
+            result.append(jet_count_experiment(n=n, r=r, k=1000))
+    print(result)
+    np.savetxt("/media/ramdisk/jet_finder_count.csv", result, delimiter=",", fmt="%f")
 
 
 if __name__ == "__main__":
