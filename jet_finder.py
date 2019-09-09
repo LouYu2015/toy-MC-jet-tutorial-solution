@@ -1,4 +1,5 @@
 import numpy as np
+import matplotlib.pyplot as plt
 import math
 import copy
 import generator
@@ -24,7 +25,7 @@ def beam_distance(p: np.ndarray, n: int):
 
 
 def find_jets_to_merge(jets: [np.ndarray], n, r, cache):
-    assert(len(jets) >= 2)
+    assert (len(jets) >= 2)
     min_i = 0
     min_j = 1
     min_d = float('inf')
@@ -82,6 +83,12 @@ def cluster_jets(jets: [np.ndarray], n: float, r: float, exclusive: bool):
     return result + jets
 
 
+def simple_mass(jets: [np.ndarray]) -> float:
+    jets = sorted(jets, key=lambda jet: np.linalg.norm(jet), reverse=True)
+    return np.linalg.norm(jets[0]) * np.linalg.norm(jets[1]) * \
+           angular_distance(jets[0], jets[1])
+
+
 def jet_count_experiment(n: float, r: float, k: int) -> np.ndarray:
     num_jets = []
     for i in range(k):
@@ -92,7 +99,7 @@ def jet_count_experiment(n: float, r: float, k: int) -> np.ndarray:
     return np.concatenate([[n], [r], np.bincount(num_jets, minlength=100)[:100]])
 
 
-def main():
+def jet_count_experiment_main():
     random.seed(0)
     result = []
     for n in (-1, 0, 1):
@@ -102,5 +109,23 @@ def main():
     np.savetxt("/media/ramdisk/jet_finder_count.csv", result, delimiter=",", fmt="%f")
 
 
+def simple_mass_experiment_main():
+    random.seed(0)
+    result = []
+    for i in range(1000):
+        j = generator.initial_jet()
+        jets = generator.generate_event(j, 0.5)
+        jets = cluster_jets(jets, n=1, r=1, exclusive=False)
+        mass = simple_mass(jets)
+        result.append(mass)
+        print(i)
+
+    plt.xlabel('Simple Mass')
+    plt.ylabel('Number of Simulations')
+    plt.title(r'Distribution of Simple Mass')
+    plt.hist(result, bins=100)
+    plt.show()
+
+
 if __name__ == "__main__":
-    main()
+    simple_mass_experiment_main()
