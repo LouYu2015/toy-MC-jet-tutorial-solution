@@ -40,7 +40,22 @@ class Window(pyglet.window.Window):
         # Draw the six sides of the cube
 
         glBegin(GL_LINES)
+        glColor3f(1, 0, 0)
+        glVertex3f(0, 0, 0)
+        glVertex3f(20, 0, 0)
+
+        glColor3f(0, 1, 0)
+        glVertex3f(0, 0, 0)
+        glVertex3f(0, 20, 0)
+
+        glColor3f(0.25, 0.5, 1)
+        glVertex3f(0, 0, 0)
+        glVertex3f(0, 0, 20)
+        glEnd()
+
+        glBegin(GL_LINES)
         for row in lines:
+            glColor3f(1, 1, 1)
             glVertex3d(row[0], row[1], row[2])
             glVertex3d(row[3], row[4], row[5])
         glEnd()
